@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 import PIL
-from PIL import Image, ImageChops, ImageDraw, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageOps, ImageFont
 from PIL.ImageChops import multiply  # The key
 
 try:
@@ -15,6 +15,14 @@ except:
 
     def tqdm(a):
         return a
+
+
+DEFAULT_INK_COLORS = "cyan magenta yellow black".split()
+
+def shuffled_colors():
+    c = "cyan magenta yellow".split()
+    random.shuffle(c)
+    return c + ["black"]
 
 
 def offset_with_chop(i, limit, no_wrap=False):
@@ -46,17 +54,17 @@ def color_with_rand(color, rand_color_pct):
 def draw(
     path,
     debug=False,
-    colors="cyan magenta yellow black",
+    colors=DEFAULT_INK_COLORS,
     color_pct=0,
     offset_pct=0,
     label=False,
 ):
-    _colors = [PIL.ImageColor.getrgb(c) for c in colors.split()]
+    _colors = [PIL.ImageColor.getrgb(c) for c in colors]
     if color_pct:
         _colors = [color_with_rand(c, color_pct) for c in _colors]
     ink_for = dict(zip("CMYK", _colors))
 
-    with Image.open(fname) as im:
+    with Image.open(path) as im:
         _layers = im.convert("CMYK").split()
         size = _layers[0].size
         # Random shift, Riso imperfection
@@ -93,29 +101,33 @@ def draw(
         ]
     if label:
         draw = ImageDraw.Draw(preview)
-        try:
-            ImageFont.truetype("Arial.ttf", 50)
-        except:
-            font = PIL.ImageFont.load_default()
-        color_str = " ".join(f"#{r:02X}{g:02X}{b:02X}" for r, g, b in _colors)
-        draw.text((10, 10), f"{offset_pct}  {color_str}", fill="black", font=font)
-        R = size[1] * 0.02
+        # Draw label and rectangles relative to image size
+        R = size[1] * 0.025
         RR = R / 10
+        try:
+            font = ImageFont.truetype("Inconsolata-Light.ttf", max(14, R))
+        except OSError:
+            font = PIL.ImageFont.load_default()
+            print("DEFAULT FONT")
+        colors_str = [f"# {r:02X} {g:02X} {b:02X}" for r, g, b in _colors]
+        draw.text((10, 10), f"{offset_pct}  {' '.join(colors_str)}", fill="black", font=font)
         for i, c in enumerate(_colors):
-            draw.rectangle(
-                (RR, R + i * R, size[0] - RR * 2, R + (i + 1) * R - RR), fill=c
-            )
+            x0, y0 = RR, R + i * R
+            x1, y1 = size[0] - RR * 2, R + (i + 1) * R - RR
+            draw.rectangle((x0, y0, x1, y1), fill=c)
+            draw.text((x0 + RR, y0 + RR), colors_str[i], fill="black", font=font)
     return preview
 
 
 # https://graphicdesign.stackexchange.com/questions/55673/how-can-i-simulate-screen-printing-offset-colors-in-a-non-destructive-way
 
 
-if __name__ == "__main__":
-    N = 20
-    # fname = "./Blattermann_test.png"
-    fname = "~/sync/art/2026/_FEL9990_plus_9994.png"
+def main(fname, N=20):
     fname = Path(fname).expanduser()
+    # Try different percentages of color and offset intensities (units are percent %)
+    variations = [(2, 5), (1, 1), (2, 0), (0, 1)]
+    print("Processing", fname, f"{N} possibilities")
+    print("Color/offset randomization percentages:", "; ".join(map(str, variations)))
     # Save each ink layer
     draw(
         fname,
@@ -124,12 +136,32 @@ if __name__ == "__main__":
 
     # Try MANY variations
     for i in tqdm(range(N)):
-        for j, (C, O) in enumerate([(2, 5), (1, 1), (2, 0), (0, 1)]):
-            suffix = str(fname.with_suffix(f"._{j}_{i}.jpg").name)
+        for j, (color_pct, offset_pct) in enumerate(variations):
+            suffix = str(fname.with_suffix(f".__{j}_{i}.jpg").name)
             draw(
                 fname,
                 debug=False,
+                colors=shuffled_colors(),
                 label=True,
-                color_pct=C,
-                offset_pct=O,
+                color_pct=color_pct,
+                offset_pct=offset_pct,
             ).save(suffix)
+
+if __name__ == "__main__":
+    _fname = "./Blattermann_test.png"
+    main(_fname, N=1)
+
+    # friend G, Axel, and other 2025s
+    # Miss you, Axel <3
+    # variations = [(2, 5), (1, 1), (2, 0), (0, 1)]
+    # _fname = "~/sync/art/2026/riso/_FEL9990_plus_9994.png"
+    # _fname = "~/sync/art/2026/riso/axel_2025-12-23_20.25.57.jpg"
+    # _fname = "~/sync/art/2026/riso/_FEL4089.jpg"
+    # _fname = "~/sync/art/2026/riso/_FEL8043_pcrop.png"
+    # _fname = "~/sync/art/2026/riso/_FEL3175.jpg"
+    # main(_fname, N=20)
+
+    # Abstract realism in the Appalachian forest (Ohio 2025)
+    # variations = [(2, 5), (1, 1), (2, 0), (0, 1)]
+    for _fname in "3731 3787 3825".split():
+        main("~/sync/art/2026/riso/_FEL" + _fname + ".jpg", N=5)
