@@ -1,10 +1,12 @@
 # Preprocessor for Riso Printing
 
-Riso printing creates imperfect copies of a digital image using large bottles of ink and a made of rice paper.
+A Riso printer creates imperfect copies of a digital image by pressing layers of ink on top of stencils made of rice paper perforated with small holes (300 DPI).
 
-<img width="300" alt="Riso style variation of a photograph" src="https://github.com/user-attachments/assets/0ca48c78-7091-490a-b1da-63130514e1a3" />
+<img width="270" alt="Riso style variation of a photograph" src="https://github.com/user-attachments/assets/0ca48c78-7091-490a-b1da-63130514e1a3" />
 
-<img width="300" alt="Riso style variation of a photograph" src="https://github.com/user-attachments/assets/c1c88fa4-0200-4e4b-8799-24b60d81ac58" />
+<img width="270" alt="_FEL9990_plus_9994" src="https://github.com/user-attachments/assets/8a6af1d3-ea7e-43b2-a832-06c61db7f002" />
+
+<img width="270" alt="Riso style variation of a photograph (2)" src="https://github.com/user-attachments/assets/c229a093-e489-4c67-8f9b-d91147984f62" />
 
 
 The printer uses a thermal head to burn the digital image into rice paper, called the master stencil.
