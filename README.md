@@ -2,9 +2,9 @@
 
 Riso printing creates imperfect copies of a digital image using large bottles of ink and a made of rice paper.
 
-![_FEL9990_plus_9994 _2_15](https://github.com/user-attachments/assets/0ca48c78-7091-490a-b1da-63130514e1a3)
+<img width="300" alt="Riso style variation of a photograph" src="https://github.com/user-attachments/assets/0ca48c78-7091-490a-b1da-63130514e1a3" />
 
-![M](https://github.com/user-attachments/assets/c1c88fa4-0200-4e4b-8799-24b60d81ac58)
+<img width="300" alt="Riso style variation of a photograph" src="https://github.com/user-attachments/assets/c1c88fa4-0200-4e4b-8799-24b60d81ac58" />
 
 
 The printer uses a thermal head to burn the digital image into rice paper, called the master stencil.
@@ -38,9 +38,9 @@ Simulation and fast iteration are fantastic for creative control, and trying out
 
 Imagine we replace the red,  green, and blue inks with different colors that are slightly or very different. Imagine we shift each color layer slightly. See any that stand out?
 
-<img width="1650" height="865" alt="2026-02-16_22-59-15" src="https://github.com/user-attachments/assets/d3f2d707-bf84-43c2-93c7-da95d48f52ce" />
+<img width="1650" height="865" alt="variations of a simple image" src="https://github.com/user-attachments/assets/d3f2d707-bf84-43c2-93c7-da95d48f52ce" />
 
-<img width="1601" height="923" alt="2026-02-16_22-53-05" src="https://github.com/user-attachments/assets/24f9cc53-419b-45e0-9ef0-dab788cc1d4d" />
+<img width="1601" height="923" alt="variations of a landscape photograph" src="https://github.com/user-attachments/assets/24f9cc53-419b-45e0-9ef0-dab788cc1d4d" />
 
 
 
