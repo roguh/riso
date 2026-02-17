@@ -8,7 +8,13 @@ from pathlib import Path
 import PIL
 from PIL import Image, ImageChops, ImageDraw, ImageOps
 from PIL.ImageChops import multiply  # The key
-from tqdm import tqdm
+
+try:
+    from tqdm import tqdm
+except:
+
+    def tqdm(a):
+        return a
 
 
 def offset_with_chop(i, limit, no_wrap=False):
@@ -30,11 +36,11 @@ def offset_with_chop(i, limit, no_wrap=False):
 
 def color_with_rand(color, rand_color_pct):
     P = rand_color_pct / 100
-    r, g, b = [c / 255 for c in PIL.ImageColor.getrgb(color)]
+    r, g, b = [c / 255 for c in color]
     h, s, v = colorsys.rgb_to_hsv(r, g, b)
-    rand = lambda _max: 1 + ((1 - random.random() * 2) * P)
-    r = colorsys.hsv_to_rgb(h * rand(1), s * rand(1), (v * rand(1)))
-    return [(int(c * 255)) % 255 for c in r]
+    rand = lambda: 1 + ((1 - random.random() * 2) * P)
+    r = colorsys.hsv_to_rgb(h * rand(), s * rand(), v * rand())
+    return tuple((int(c * 255)) % 255 for c in r)
 
 
 def draw(
@@ -45,7 +51,9 @@ def draw(
     offset_pct=0,
     label=False,
 ):
-    _colors = [color_with_rand(c, color_pct) for c in colors.split()]
+    _colors = [PIL.ImageColor.getrgb(c) for c in colors.split()]
+    if color_pct:
+        _colors = [color_with_rand(c, color_pct) for c in _colors]
     ink_for = dict(zip("CMYK", _colors))
 
     with Image.open(fname) as im:
@@ -58,8 +66,8 @@ def draw(
 
     # Colorize each layer.
     # What this does is everything that is black will become the color we have chosen, everything that is white, will remain white. A 50% grey will look like a 50-50 mix of the color and white. Exactly what we want.
-    ink_layers = {color_name:
-        ImageOps.colorize(
+    ink_layers = {
+        color_name: ImageOps.colorize(
             (ImageOps.invert((layer))), black=ink_for[color_name], white="white"
         )
         for color_name, layer in layers.items()
@@ -79,7 +87,10 @@ def draw(
 
     if debug:
         # [layer.show() for layer in layers.values()]
-        [layer.show() if debug is True else debug(name, layer) for name, layer in ink_layers.items()]
+        [
+            layer.show() if debug is True else debug(name, layer)
+            for name, layer in ink_layers.items()
+        ]
     if label:
         draw = ImageDraw.Draw(preview)
         try:
@@ -88,6 +99,12 @@ def draw(
             font = PIL.ImageFont.load_default()
         color_str = " ".join(f"#{r:02X}{g:02X}{b:02X}" for r, g, b in _colors)
         draw.text((10, 10), f"{offset_pct}  {color_str}", fill="black", font=font)
+        R = size[1] * 0.02
+        RR = R / 10
+        for i, c in enumerate(_colors):
+            draw.rectangle(
+                (RR, R + i * R, size[0] - RR * 2, R + (i + 1) * R - RR), fill=c
+            )
     return preview
 
 
@@ -95,22 +112,24 @@ def draw(
 
 
 if __name__ == "__main__":
-    # "./Blattermann_test.png"
     N = 20
+    # fname = "./Blattermann_test.png"
     fname = "~/sync/art/2026/_FEL9990_plus_9994.png"
     fname = Path(fname).expanduser()
     # Save each ink layer
     draw(
         fname,
-        debug=lambda name, img: img.save(name + ".png"),
+        debug=lambda name, img: img.save(name + ".jpg"),
     )
 
+    # Try MANY variations
     for i in tqdm(range(N)):
-        suffix = str(fname.with_suffix(f"._{i}.png").name)
-        draw(
-            fname,
-            debug=False,
-            label=True,
-            color_pct=20,
-            offset_pct=5,
-        ).save(suffix)
+        for j, (C, O) in enumerate([(2, 5), (1, 1), (2, 0), (0, 1)]):
+            suffix = str(fname.with_suffix(f"._{j}_{i}.jpg").name)
+            draw(
+                fname,
+                debug=False,
+                label=True,
+                color_pct=C,
+                offset_pct=O,
+            ).save(suffix)
