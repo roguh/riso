@@ -41,3 +41,44 @@ Imagine we replace the red,  green, and blue inks with different colors that are
 <img width="1650" height="865" alt="2026-02-16_22-59-15" src="https://github.com/user-attachments/assets/d3f2d707-bf84-43c2-93c7-da95d48f52ce" />
 
 <img width="1601" height="923" alt="2026-02-16_22-53-05" src="https://github.com/user-attachments/assets/24f9cc53-419b-45e0-9ef0-dab788cc1d4d" />
+
+
+
+
+
+<!--- I'm not sure why I'd want to use 16 different ink colors. UPDATE I see it now
+
+## GUI or CLI
+
+Download and run the program and click around, or run it from the shell if you prefer command line interfaces, or need to batch process images.
+
+TODO GUI
+TODO screenshots
+TODO batch demo
+TODO animation in riso
+
+### PROBLEMS
+how to blend? CMYK uses subtractive, paint not pixels!
+should i caree about color calibration or ICC profiles?
+how does img subtraction work?
+i tried so many combinations of blend, colorize, multiply, screen, add, subtract
+https://prinfab.com/blog/simulating-a-screen-print-with-digital-print/ was difficult bc i dont know photoshop
+https://graphicdesign.stackexchange.com/questions/55673/how-can-i-simulate-screen-printing-offset-colors-in-a-non-destructive-way PERFECT EXPLAIN
+
+We set this layers Blend Mode to Screen. What this does is everything that is black will become the color we have chosen, everything that is white, will remain white. A 50% grey will look like a 50-50 mix of the color and white. Exactly what we want.
+Bonus point is: If we double click on the Color Fill Layer we can change the color and immediately see the result in our image. This makes choosing spot color combinations for printing a lot easier.
+Since this is inside a folder that is set to Multiply the effect of Screen won’t affect anything outside the folder (i.e. this won’t “screen” the other folders below)
+Attention! The Blend Mode Screen handles transparency as if it would be black, which is confusing because we would rather assume to handle it as white. If your folder doesn’t have a solid white background, everything that is transparent will become the color you have chosen. To avoid this, but a white background at the end of each folder (e.g. by using a Color Fill set to white).
+iterated with repl and lots of ctrl emacs jumping around to edit, some images i saved from the hektick process TODO
+
+NOW I HAVE SPLIT UP AN IMAGE INTO GRAYSCALE LAYERS
+COLORIZED EACH LAYER
+AND BLENDED AS THOUGH THEY WERE PAINT!
+
+now randomly shifting and randomizing hue/saturation for each ink color :)
+as though the Riso layers had shifted or we had inks besides CMYK
+
+TODO do i want Adobe RGB instead of srgb?
+
+
+ -->
