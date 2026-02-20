@@ -18,6 +18,7 @@ except:
 
 
 DEFAULT_INK_COLORS = "cyan magenta yellow black".split()
+CACHE = dict()  # ...
 
 def shuffled_colors():
     c = "cyan magenta yellow".split()
@@ -50,6 +51,17 @@ def color_with_rand(color, rand_color_pct):
     r = colorsys.hsv_to_rgb(h * rand(), s * rand(), v * rand())
     return tuple((int(c * 255)) % 255 for c in r)
 
+MAX_HEIGHT = 2500 # speed
+def get_layers(path):
+    if path not in CACHE:
+        with Image.open(path) as im:
+            w, h = im.size
+            if h > MAX_HEIGHT:
+                rim = im.resize((int(w * MAX_HEIGHT / h), MAX_HEIGHT))
+            else:
+                rim = im
+            CACHE[path] = rim.convert("CMYK").split()
+    return CACHE[path]
 
 def draw(
     path,
@@ -64,13 +76,12 @@ def draw(
         _colors = [color_with_rand(c, color_pct) for c in _colors]
     ink_for = dict(zip("CMYK", _colors))
 
-    with Image.open(path) as im:
-        _layers = im.convert("CMYK").split()
-        size = _layers[0].size
-        # Random shift, Riso imperfection
-        lim = int(offset_pct / 100 * min(size))
-        _layers = [offset_with_chop(L, lim) for L in _layers]
-        layers = dict(zip("CMYK", _layers))
+    _layers = get_layers(path)
+    size = _layers[0].size
+    # Random shift, Riso imperfection
+    lim = int(offset_pct / 100 * min(size))
+    _layers = [offset_with_chop(L, lim) for L in _layers]
+    layers = dict(zip("CMYK", _layers))
 
     # Colorize each layer.
     # What this does is everything that is black will become the color we have chosen, everything that is white, will remain white. A 50% grey will look like a 50-50 mix of the color and white. Exactly what we want.
@@ -148,8 +159,8 @@ def main(fname, N=20):
             ).save(suffix)
 
 if __name__ == "__main__":
-    _fname = "./Blattermann_test.png"
-    main(_fname, N=1)
+    # _fname = "./Blattermann_test.png"
+    # main(_fname, N=1)
 
     # friend G, Axel, and other 2025s
     # Miss you, Axel <3
@@ -159,9 +170,10 @@ if __name__ == "__main__":
     # _fname = "~/sync/art/2026/riso/_FEL4089.jpg"
     # _fname = "~/sync/art/2026/riso/_FEL8043_pcrop.png"
     # _fname = "~/sync/art/2026/riso/_FEL3175.jpg"
-    # main(_fname, N=20)
+    _fname = "~/sync/art/2026/riso/FEL_0163.jpg"
+    main(_fname, N=20)
 
     # Abstract realism in the Appalachian forest (Ohio 2025)
     # variations = [(2, 5), (1, 1), (2, 0), (0, 1)]
-    for _fname in "3731 3787 3825".split():
-        main("~/sync/art/2026/riso/_FEL" + _fname + ".jpg", N=5)
+    # for _fname in "3731 3787 3825".split():
+    #     main("~/sync/art/2026/riso/_FEL" + _fname + ".jpg", N=5)
