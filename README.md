@@ -36,6 +36,8 @@ I recommend color calibrating your monitor.
 
 Simulation and fast iteration are fantastic for creative control, and trying out different limits.
 
+Massive thanks to [Marcus Blätterman](https://graphicdesign.stackexchange.com/questions/55673/how-can-i-simulate-screen-printing-offset-colors-in-a-non-destructive-way)
+
 # Variation explorer!
 
 Imagine we replace the red,  green, and blue inks with different colors that are slightly or very different. Imagine we shift each color layer slightly. See any that stand out?
